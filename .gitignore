@@ -26,6 +26,8 @@
 *.exe
 *.out
 *.app
+simulador
 
 # VIM files
 *.*.swp
+
