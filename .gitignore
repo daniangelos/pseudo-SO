@@ -30,4 +30,5 @@ simulador
 
 # VIM files
 *.*.swp
+*.*~
 
