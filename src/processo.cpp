@@ -1,14 +1,16 @@
 #include "../header/processo.hpp"
 ostream& operator<<(ostream& os,const processo_t& it)
 {
-	os << it.pid << ' ';
-	os << it.prioridade << ' ';
-	os << it.mem_offset << ' ';
-	os << it.qtd_blocos << ' ';
-	os << it.uso_impressora << ' ';
-	os << it.uso_scanner << ' ';
-	os << it.uso_disco << ' ';
-	os << it.uso_modem;
+	os << "dispatcher =>" << '\n';
+	os << "\tPID: " << it.pid << '\n';
+	os << "\toffset: " << it.mem_offset << '\n';
+	os << "\tblocks: " << it.qtd_blocos << '\n';
+	os << "\tpriority: " << it.prioridade << '\n';
+	os << "\ttime: " << '\n';
+	os << "\tprinters: " << it.uso_impressora << '\n';
+	os << "\tscanners: " << it.uso_scanner << '\n';
+	os << "\tmodems: " << it.uso_modem << '\n';
+	os << "\tdrives: " << it.uso_disco;
 	return os;
 }
 
