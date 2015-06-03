@@ -1,6 +1,7 @@
 #include<iostream>
 #include<fstream>
 #include "../header/processo.hpp"
+#include "../header/escalonador.hpp"
 
 using namespace std;
 
@@ -15,9 +16,9 @@ int main(int argc, char* argv[]) {
 	input = argv[1];
 
 	
-	processo_t *p = processo_init(1, 2, 3, 4, true, true, false, false);
-	despachante(*p);
-	delete p;
+	processo_t p(1, 2, 3, 4, true, true, false, false);
+	escalonador e;
+	e.despachante(p);
 
 
 	return 0;

@@ -5,6 +5,10 @@
 #define MAX_REAL 64
 #define MAX_USUARIO 960
 
-int mem[MAX_MEM];
+class memoria
+{
+	private:
+		int mem[MAX_MEM];
+};
 
 #endif //MEMORIA_HPP

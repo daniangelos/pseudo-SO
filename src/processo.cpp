@@ -1,27 +1,53 @@
 #include "../header/processo.hpp"
-
-void despachante(processo_t p){
-	p.show();
-	return;
-}
-
-// TODO: BRANCO VAI FAZER MAIS FODA
-void processo_t:: show(){
-	cout << "\tPID: " << pid << endl;
-	return;
-}
-
-processo_t* processo_init(int id,int pr, int mem, int bl, bool i, bool s, bool d, bool m)
+ostream& operator<<(ostream& os,const processo_t& it)
 {
-	processo_t *p = new processo_t;
-	p->pid = id;
-   	p->prioridade = pr;
-	p->mem_offset = mem;
-	p->quant_blocos = bl;
-	p->uso_impressora = i;
-	p->uso_scanner = s;
-	p->uso_disco = d;
-	p->uso_modem = m;	
+	os << it.pid << ' ';
+	os << it.prioridade << ' ';
+	os << it.mem_offset << ' ';
+	os << it.qtd_blocos << ' ';
+	os << it.uso_impressora << ' ';
+	os << it.uso_scanner << ' ';
+	os << it.uso_disco << ' ';
+	os << it.uso_modem;
+	return os;
+}
 
-	return p;	
+int processo_t::get_pid()
+{
+	return this->pid;
+}
+
+int processo_t::get_prioridade()
+{
+	return this->prioridade;
+}
+
+int processo_t::get_memoffset()
+{
+	return this->mem_offset;
+}
+
+int processo_t::get_qtdblocos()
+{
+	return this->qtd_blocos;
+}
+
+bool processo_t::get_impressora()
+{
+	return this->uso_impressora;
+}
+
+bool processo_t::get_scanner()
+{
+	return this->uso_scanner;
+}
+
+bool processo_t::get_disco()
+{
+	return this->uso_disco;
+}
+
+bool processo_t::get_modem()
+{
+	return this->uso_modem;
 }
