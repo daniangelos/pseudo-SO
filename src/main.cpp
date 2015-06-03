@@ -16,9 +16,10 @@ int main(int argc, char* argv[]) {
 	input = argv[1];
 
 	
-	processo_t p(1, 2, 3, 4, true, true, false, false);
+	//processo_t p(1, 0, 2, 0, 3, 64, false, false, false, false);
 	escalonador e;
-	e.despachante(p);
+	//e.despachante(p);
+	e.utils_tomem(input);
 
 
 	return 0;

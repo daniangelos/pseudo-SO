@@ -2,6 +2,8 @@
 #define ESCALONADOR_HPP
 #include <vector>
 #include <queue>
+#include <fstream>
+#include <string>
 #include "processo.hpp"
 class escalonador
 {
@@ -13,6 +15,7 @@ class escalonador
 		queue<processo_t> f_temporeal;
 	public:
 		void despachante (processo_t p);
+		void utils_tomem(string nome_arq);
 };
 
 #endif //ESCALONADOR_HPP
