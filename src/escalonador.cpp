@@ -17,7 +17,8 @@ void escalonador::utils_tomem(string nome_arq)
 	vector<int> aux;
 	char *pch;
 	processo_t p;
-	int _ti,_pr,_tp,_qb,_i,_s,_m,_d;
+	int id = 0;
+	int _ti, _pr, _tp, _qb, _i, _s, _m, _d;
 
 	while(getline(sc,s))
 	{
@@ -33,7 +34,7 @@ void escalonador::utils_tomem(string nome_arq)
 	}		
 	for(int i=0;i<aux.size();i+=8)
 	{
-		p.set_pid(-1);
+		p.set_pid(id);
 		p.set_memoffset(-1);
 		p.set_timeinit(aux[i]);
 		p.set_prioridade(aux[i+1]);
@@ -44,5 +45,33 @@ void escalonador::utils_tomem(string nome_arq)
 		p.set_modem(aux[i+6]);
 		p.set_disco(aux[i+7]);
 		processos.push_back(p);	
+		id++;
 	}
+}
+
+void escalonador::order_process()
+{
+	int pr;
+
+	sort(processos.begin(), processos.end(), first_executed);
+
+	for(processo_t p : processos)
+	{
+		pr = p.get_prioridade();
+		switch(pr){
+			case 0:
+				f_temporeal.push(p);
+				break;
+			case 1:
+				f_usuario_p1.push(p);
+				break;
+			case 2:
+				f_usuario_p2.push(p);
+				break;
+			case 3:
+				f_usuario_p3.push(p);
+				break;
+		}
+	}
+
 }

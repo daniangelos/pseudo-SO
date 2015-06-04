@@ -20,6 +20,7 @@ int main(int argc, char* argv[]) {
 	escalonador e;
 	//e.despachante(p);
 	e.utils_tomem(input);
+	e.order_process();
 	e.show_allp();
 
 

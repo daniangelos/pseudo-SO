@@ -118,3 +118,7 @@ void processo_t::set_disco(const bool _d)
 	this->uso_disco = _d;
 }
 
+bool first_executed(processo_t p1, processo_t p2)
+{
+	return p1.get_timeinit() < p2.get_timeinit();
+}

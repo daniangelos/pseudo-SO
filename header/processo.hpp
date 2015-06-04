@@ -12,8 +12,11 @@ class processo_t
 {
 	public:
 		processo_t(){}
-		processo_t(const int _pid,const int _mo,const int _ti, const int _pr, const int _tp, const int _qb, const bool _i, const bool _s, const bool _m, const bool _d):
-			pid(_pid),mem_offset(_mo),time_init(_ti),prioridade(_pr),time_proc(_tp),qtd_blocos(_qb),uso_impressora(_i),uso_scanner(_s),uso_modem(_m),uso_disco(_d){}
+		processo_t(const int _pid,const int _mo,const int _ti, const int _pr, const int _tp,
+			   	const int _qb, const bool _i, const bool _s, const bool _m, const bool _d):
+			// Construtor:
+			pid(_pid), mem_offset(_mo), time_init(_ti), prioridade(_pr), time_proc(_tp),
+			 qtd_blocos(_qb), uso_impressora(_i), uso_scanner(_s), uso_modem(_m), uso_disco(_d) { }
 		friend ostream& operator<<(ostream& os,const processo_t& it);
 		int get_pid();
 		void set_pid(const int _id);
@@ -47,5 +50,7 @@ class processo_t
 		bool uso_modem;
 		bool uso_disco;
 };
+
+bool first_executed(processo_t p1, processo_t p2);
 
 #endif // PROCESSO_HPP
