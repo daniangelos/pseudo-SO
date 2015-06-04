@@ -6,7 +6,7 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-	if(argc != 2) {
+	if(argc < 2) {
 		cerr << "\tNumero de argumentos invalidos!" << endl;
 		cerr << "\tModo de uso: ./simulador <input.txt>" << endl;
 		return -1;
@@ -20,6 +20,7 @@ int main(int argc, char* argv[]) {
 	escalonador e;
 	//e.despachante(p);
 	e.utils_tomem(input);
+	e.show_allp();
 
 
 	return 0;

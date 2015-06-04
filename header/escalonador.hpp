@@ -4,6 +4,8 @@
 #include <queue>
 #include <fstream>
 #include <string>
+#include <cstring>
+#include <cstdlib>
 #include "processo.hpp"
 class escalonador
 {
@@ -14,6 +16,7 @@ class escalonador
 		queue<processo_t> f_usuario_p3;
 		queue<processo_t> f_temporeal;
 	public:
+		void show_allp();
 		void despachante (processo_t p);
 		void utils_tomem(string nome_arq);
 };
