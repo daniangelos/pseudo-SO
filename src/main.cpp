@@ -21,8 +21,9 @@ int main(int argc, char* argv[]) {
 	//e.despachante(p);
 	e.utils_tomem(input);
 	e.order_process();
-	e.show_allp();
-
+	e.start_time();
+	e.simulacao();
+	//e.show_allp();
 
 	return 0;
 }

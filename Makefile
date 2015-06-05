@@ -6,6 +6,7 @@ F = -g -std=c++11 -pthread
 simulacao: main.o processo.o memoria.o recurso.o escalonador.o
 	@echo "Linkando simulador ..."
 	@g++ main.o processo.o memoria.o recurso.o escalonador.o $F -o simulador
+	@echo "Pronto!"
 
 main.o: src/main.cpp 
 	@echo "Criando objeto de main ..."
@@ -29,7 +30,7 @@ escalonador.o: src/escalonador.cpp header/escalonador.hpp
 
 
 run: simulador
-	./simulador input/casoteste1.txt
+	@./simulador input/casoteste1.txt
 
 clean:
 	@rm -f *.o

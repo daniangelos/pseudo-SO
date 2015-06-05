@@ -19,10 +19,15 @@ class escalonador
 		queue<processo_t> f_usuario_p3;
 		queue<processo_t> f_temporeal;
 	public:
+		int seconds_passed;
 		void show_allp();
 		void despachante (processo_t p);
 		void utils_tomem(string nome_arq);
 		void order_process();
+		void start_time();
+		void simulacao();
+		int get_time_passed();
+		bool prox_processo(processo_t *p);
 };
 
 #endif //ESCALONADOR_HPP

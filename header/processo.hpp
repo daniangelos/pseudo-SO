@@ -8,6 +8,8 @@
 
 using namespace std;
 
+enum Tipo_P { TEMPO_REAL, USUARIO_P1, USUARIO_P2, USUARIO_P3 };
+
 class processo_t
 {
 	public:
@@ -38,6 +40,7 @@ class processo_t
 		void set_disco(const bool _d);
 		bool get_modem();
 		void set_modem(const bool _m);
+		void executar();
 	private:
 		int pid;
 		int time_init;

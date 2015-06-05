@@ -1,9 +1,49 @@
 #include "../header/escalonador.hpp"
 void escalonador::show_allp()
 {
+	processo_t q;
+
+	cout << "Todos os processos: " << endl;
 	for(processo_t p : processos)
 		despachante(p);
+
+	cout << "\nTodos os processos de tempo real: " << endl;
+	for(int i=0; i<f_temporeal.size(); i++)
+	{
+		q = f_temporeal.front();
+		despachante(q);
+		f_temporeal.pop();
+		f_temporeal.push(q);
+	}
+
+	cout << "\nTodos os processos de usuario com prioridade 1: "<< endl;
+	for(int i=0; i<f_usuario_p1.size(); i++)
+	{
+		q = f_usuario_p1.front();
+		despachante(q);
+		f_usuario_p1.pop();
+		f_usuario_p1.push(q);
+	}
+
+	cout << "\nTodos os processos de usuario com prioridade 2: "<< endl;
+	for(int i=0; i<f_usuario_p2.size(); i++)
+	{
+		q = f_usuario_p2.front();
+		despachante(q);
+		f_usuario_p2.pop();
+		f_usuario_p2.push(q);
+	}
+
+	cout << "\nTodos os processos de usuario com prioridade 3: "<< endl;
+	for(int i=0; i<f_usuario_p3.size(); i++)
+	{
+		q = f_usuario_p3.front();
+		despachante(q);
+		f_usuario_p3.pop();
+		f_usuario_p3.push(q);
+	}
 }
+
 void escalonador::despachante(processo_t p){
 	cout << p << endl;
 	return;
@@ -59,19 +99,86 @@ void escalonador::order_process()
 	{
 		pr = p.get_prioridade();
 		switch(pr){
-			case 0:
+			case TEMPO_REAL:
 				f_temporeal.push(p);
 				break;
-			case 1:
+			case USUARIO_P1:
 				f_usuario_p1.push(p);
 				break;
-			case 2:
+			case USUARIO_P2:
 				f_usuario_p2.push(p);
 				break;
-			case 3:
+			case USUARIO_P3:
 				f_usuario_p3.push(p);
 				break;
 		}
 	}
 
+}
+
+void escalonador::start_time()
+{
+	seconds_passed = 0;
+}
+
+int escalonador::get_time_passed()
+{
+	return seconds_passed;
+}
+
+// Verifica se existe algum processo nas filas que ja pode ser executado
+bool escalonador::prox_processo(processo_t *p)
+{
+
+	if(!f_temporeal.empty() && 
+			f_temporeal.front().get_timeinit() <= seconds_passed)
+	{
+		*p = f_temporeal.front();
+		f_temporeal.pop();
+		return true;
+	}
+	if(!f_usuario_p1.empty() &&
+			f_usuario_p1.front().get_timeinit() <= seconds_passed)
+	{
+		*p = f_usuario_p1.front();
+		f_usuario_p1.pop();
+		return true;
+	}
+	if(!f_usuario_p2.empty() && 
+			f_usuario_p2.front().get_timeinit() <= seconds_passed)
+	{
+		*p = f_usuario_p2.front();
+		f_usuario_p2.pop();
+		return true;
+	}
+	if(!f_usuario_p3.empty() && 
+			f_usuario_p3.front().get_timeinit() <= seconds_passed)
+	{
+		*p = f_usuario_p3.front();
+		f_usuario_p3.pop();
+		return true;
+	}
+
+	// ## Nao chegaram processos ainda ## //
+	return false;
+	
+}
+
+void escalonador::simulacao()
+{
+	processo_t p;
+	int tipo_p;
+	while(true)
+	{
+		if(prox_processo(&p))
+		{
+			despachante(p);
+			p.executar();
+		}
+		else
+		{
+			seconds_passed++;
+		}
+
+	}	
 }
