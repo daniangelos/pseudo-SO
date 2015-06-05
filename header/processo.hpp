@@ -40,7 +40,7 @@ class processo_t
 		void set_disco(const bool _d);
 		bool get_modem();
 		void set_modem(const bool _m);
-		void executar();
+		void executar(int *tempo);
 	private:
 		int pid;
 		int time_init;

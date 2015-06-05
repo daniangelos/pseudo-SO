@@ -28,6 +28,7 @@ class escalonador
 		void simulacao();
 		int get_time_passed();
 		bool prox_processo(processo_t *p);
+		bool ainda_existe_processo();
 };
 
 #endif //ESCALONADOR_HPP

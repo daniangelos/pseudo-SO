@@ -126,7 +126,16 @@ int escalonador::get_time_passed()
 	return seconds_passed;
 }
 
-// Verifica se existe algum processo nas filas que ja pode ser executado
+bool escalonador::ainda_existe_processo()
+{
+	return 
+		!f_temporeal.empty() ||
+		!f_usuario_p1.empty() ||
+		!f_usuario_p2.empty() ||
+		!f_usuario_p3.empty();
+}
+
+// ## Verifica se existe algum processo nas filas que ja pode ser executado ## //
 bool escalonador::prox_processo(processo_t *p)
 {
 
@@ -168,12 +177,12 @@ void escalonador::simulacao()
 {
 	processo_t p;
 	int tipo_p;
-	while(true)
+	while(ainda_existe_processo())
 	{
 		if(prox_processo(&p))
 		{
 			despachante(p);
-			p.executar();
+			p.executar(&seconds_passed);
 		}
 		else
 		{

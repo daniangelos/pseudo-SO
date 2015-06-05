@@ -118,7 +118,7 @@ void processo_t::set_disco(const bool _d)
 	this->uso_disco = _d;
 }
 
-void processo_t::executar()
+void processo_t::executar(int *tempo)
 {
 	return;
 }
