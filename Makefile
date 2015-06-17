@@ -34,8 +34,7 @@ run: simulador
 
 clean:
 	@rm -f *.o
-
-fclean:
-	@rm -f *.o
-	@rm -f simulador
 	@rm -f *.gch
+
+fclean: clean
+	@rm -f simulador

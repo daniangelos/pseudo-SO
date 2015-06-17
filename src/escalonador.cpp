@@ -3,9 +3,9 @@ void escalonador::show_allp()
 {
 	processo_t q;
 
-	cout << "Todos os processos: " << endl;
-	for(processo_t p : processos)
-		despachante(p);
+	//cout << "Todos os processos: " << endl;
+	//for(processo_t p : processos)
+		//despachante(p);
 
 	cout << "\nTodos os processos de tempo real: " << endl;
 	for(int i=0; i<f_temporeal.size(); i++)
@@ -84,6 +84,7 @@ void escalonador::utils_tomem(string nome_arq)
 		p.set_scanner(aux[i+5]);
 		p.set_modem(aux[i+6]);
 		p.set_disco(aux[i+7]);
+		p.set_recursobloqueado(SEM_RECURSO);
 		processos.push_back(p);	
 		id++;
 	}
@@ -182,7 +183,8 @@ void escalonador::simulacao()
 		if(prox_processo(&p))
 		{
 			despachante(p);
-			p.executar(&seconds_passed);
+			p.executar(seconds_passed);
+			// SE TEMPO DE EXECUCAO > 0 VOLTA PRA FILA
 		}
 		else
 		{

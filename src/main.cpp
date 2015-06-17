@@ -1,5 +1,4 @@
 #include<iostream>
-#include<fstream>
 #include "../header/processo.hpp"
 #include "../header/escalonador.hpp"
 
@@ -15,15 +14,12 @@ int main(int argc, char* argv[]) {
 	char* input;
 	input = argv[1];
 
-	
-	//processo_t p(1, 0, 2, 0, 3, 64, false, false, false, false);
 	escalonador e;
-	//e.despachante(p);
+	inicializarSemaforos();
 	e.utils_tomem(input);
 	e.order_process();
 	e.start_time();
 	e.simulacao();
-	//e.show_allp();
 
 	return 0;
 }

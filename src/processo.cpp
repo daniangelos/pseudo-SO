@@ -66,6 +66,11 @@ bool processo_t::get_modem()
 	return this->uso_modem;
 }
 
+int processo_t::get_recursobloqueado()
+{
+	return this->recurso_bloqueado;
+}
+
 //SETS FUNCTIONS
 
 void processo_t::set_pid(const int _pid)
@@ -118,10 +123,120 @@ void processo_t::set_disco(const bool _d)
 	this->uso_disco = _d;
 }
 
-void processo_t::executar(int *tempo)
+void processo_t::set_recursobloqueado(const int _rb)
 {
+	this->recurso_bloqueado = _rb;
+}
+
+// ## Impressao da execucao de um processo ## //
+void processo_t::imprime_execucao(int tempo)
+{
+	cout << "processo " << pid << " a ser executado => " << endl;
+	cout << "\tprioridade do processo: " << prioridade << endl;
+	cout << "\ttempo desde que chegou: " << tempo - time_init << endl;
+	cout << "\ttempo restante de execucao: " << time_proc << endl;
+	cout << "\tretem recurso: " << recurso_bloqueado << endl;
+
+}
+
+void processo_t::go(int &recurso, int &sucesso)
+{
+	if(recurso_bloqueado){
+		liberar_recurso(recurso_bloqueado);
+		recurso_bloqueado = 0;
+	}
+	recurso = use_recurso();
+	sucesso = bloquear_recurso(recurso);
+	if(sucesso)
+	{
+		recurso_bloqueado = recurso;
+	}
+	time_proc -= QUANTUM;
+}
+
+// ## Funcao de execucao de um processo ## //
+void processo_t::executar(int &tempo)
+{
+	int recurso;
+	int sucesso;
+	imprime_execucao(tempo);
+	switch(prioridade){
+		case TEMPO_REAL:
+			tempo += time_proc;
+			time_proc = 0;
+			break;
+
+		case USUARIO_P1:
+			go(recurso,sucesso);
+			tempo+=QUANTUM;
+			break;
+
+		case USUARIO_P2:
+			go(recurso,sucesso);
+			tempo+=QUANTUM;
+			break;
+
+		default: //USUARIO_P3
+			int i = 0;
+			while(!recurso_bloqueado)
+			{
+				go(recurso,sucesso);
+				i++;
+			}
+			tempo+=QUANTUM*i;
+			time_proc-=QUANTUM*i;
+			break;
+	}
 	return;
 }
+// ## Funcao que checa se o processo utiliza algum recurso ##//
+int processo_t::has_recurso()
+{
+	int has = SEM_RECURSO;
+	if(get_impressora() || get_scanner() || get_disco() || get_modem())
+		has = TEM_RECURSO;
+	return has;
+}
+// ## Funcao que checa se tem e vai usar recursos ##//
+// Retorna : 0 caso nao use
+// 1,2,3 dependendo do recurso
+int processo_t::use_recurso()
+{
+	srand(time(NULL));
+	int use = has_recurso();
+	if(use)
+	{
+		if(rand()%100 < PORCENTAGEM)
+		{
+			int redo;
+			do
+			{
+				redo = 0;
+				use = rand()%4 + 1;
+				switch(use)
+				{
+					case IMPRESSORA:
+						if(!get_impressora())
+							redo = 1;
+						break;
+					case SCANNER:
+						if(!get_scanner())
+							redo = 1;
+						break;
+					case MODEM:
+						if(!get_modem())
+							redo = 1;
+						break;
+					case DISCO:
+						if(!get_disco())
+							redo = 1;
+						break;
+				}
+			}while(redo);
+		}
+	}
+	return use;
+}	
 
 // ## Funcao utilizada na funcao de ordenacao ## //
 bool first_executed(processo_t p1, processo_t p2)
