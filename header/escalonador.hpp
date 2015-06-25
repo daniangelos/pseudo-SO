@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include "processo.hpp"
+#include "memoria.hpp"
 
 class escalonador
 {
@@ -18,6 +19,8 @@ class escalonador
 		queue<processo_t> f_usuario_p2;
 		queue<processo_t> f_usuario_p3;
 		queue<processo_t> f_temporeal;
+		memoria m;
+		void volta_ffila(processo_t _p);
 	public:
 		int seconds_passed;
 		void show_allp();

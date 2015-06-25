@@ -128,6 +128,8 @@ void processo_t::set_recursobloqueado(const int _rb)
 	this->recurso_bloqueado = _rb;
 }
 
+// Metodos
+
 // ## Impressao da execucao de um processo ## //
 void processo_t::imprime_execucao(int tempo)
 {
@@ -167,10 +169,6 @@ void processo_t::executar(int &tempo)
 			break;
 
 		case USUARIO_P1:
-			go(recurso,sucesso);
-			tempo+=QUANTUM;
-			break;
-
 		case USUARIO_P2:
 			go(recurso,sucesso);
 			tempo+=QUANTUM;
@@ -236,11 +234,19 @@ int processo_t::use_recurso()
 		}
 	}
 	return use;
-}	
+}
+
+// ## Funcao que checa se o processo esta em memoria ## //
+bool processo_t::in_mem()
+{
+  bool resposta = false;
+  if(this->mem_offset!=-1)
+    resposta = true;
+  return resposta;
+}
 
 // ## Funcao utilizada na funcao de ordenacao ## //
 bool first_executed(processo_t p1, processo_t p2)
 {
 	return p1.get_timeinit() < p2.get_timeinit();
 }
-

@@ -18,24 +18,21 @@ int main(int argc, char* argv[]) {
 	escalonador e;
 	inicializarSemaforos();
 
-	memoria m;
-	cout << m.aloca(20,2) << endl;
+	/*memoria m;
+	cout << m.aloca(64,0) << endl;
 	m.show();
 	cin.get();
-	cout << m.aloca(40,1) << endl;
+	cout << m.aloca(32,2) << endl;
 	m.show();
 	cin.get();
-	m.desaloca(64,20);
+	cout << m.aloca(64,1) << endl;
 	m.show();
-	cin.get();
-	cout << m.aloca(22,2) << endl;
-	m.show();
-	cin.get();
+	cin.get();*/
 
-	//e.utils_tomem(input);
-	//e.order_process();
-	//e.start_time();
-	//e.simulacao();
+	e.utils_tomem(input);
+	e.order_process();
+	e.start_time();
+	e.simulacao();
 
 	return 0;
 }

@@ -85,7 +85,7 @@ void escalonador::utils_tomem(string nome_arq)
 		p.set_modem(aux[i+6]);
 		p.set_disco(aux[i+7]);
 		p.set_recursobloqueado(SEM_RECURSO);
-		processos.push_back(p);	
+		processos.push_back(p);
 		id++;
 	}
 }
@@ -98,21 +98,7 @@ void escalonador::order_process()
 
 	for(processo_t p : processos)
 	{
-		pr = p.get_prioridade();
-		switch(pr){
-			case TEMPO_REAL:
-				f_temporeal.push(p);
-				break;
-			case USUARIO_P1:
-				f_usuario_p1.push(p);
-				break;
-			case USUARIO_P2:
-				f_usuario_p2.push(p);
-				break;
-			case USUARIO_P3:
-				f_usuario_p3.push(p);
-				break;
-		}
+		volta_ffila(p);
 	}
 
 }
@@ -178,18 +164,54 @@ void escalonador::simulacao()
 {
 	processo_t p;
 	int tipo_p;
+	unsigned int offset;
 	while(ainda_existe_processo())
 	{
 		if(prox_processo(&p))
 		{
+			if(!p.in_mem())
+			{
+			  offset = m.aloca(p.get_qtdblocos(),p.get_prioridade());
+			  if(offset==MAX_MEM)
+			  {
+			    cout << "\a---ERROR : MEMORIA NAO ALOCADA---" << endl;
+			    volta_ffila(p);
+			    continue;
+			  }
+			  else
+			    p.set_memoffset(offset);
+			}
 			despachante(p);
 			p.executar(seconds_passed);
+			if(p.get_timeexec() > 0)
+			  volta_ffila(p);
+			else
+			  m.desaloca(p.get_memoffset(),p.get_qtdblocos());
 			// SE TEMPO DE EXECUCAO > 0 VOLTA PRA FILA
 		}
 		else
-		{
-			seconds_passed++;
-		}
+		  seconds_passed++;
 
 	}	
+}
+
+
+void escalonador::volta_ffila(processo_t _p)
+{
+  switch(_p.get_prioridade())
+  {
+    case TEMPO_REAL:
+	    f_temporeal.push(_p);
+	    break;
+    case USUARIO_P1:
+	    f_usuario_p1.push(_p);
+	    break;
+    case USUARIO_P2:
+	    f_usuario_p2.push(_p);
+	    break;
+    case USUARIO_P3:
+	    f_usuario_p3.push(_p);
+	    break;
+     
+  }
 }

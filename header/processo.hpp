@@ -23,7 +23,8 @@ class processo_t
 			   	const int _qb, const bool _i, const bool _s, const bool _m, const bool _d, int _rb):
 			// Construtor:
 			pid(_pid), mem_offset(_mo), time_init(_ti), prioridade(_pr), time_proc(_tp),
-			 qtd_blocos(_qb), uso_impressora(_i), uso_scanner(_s), uso_modem(_m), uso_disco(_d),recurso_bloqueado(_rb) { }
+			 qtd_blocos(_qb), uso_impressora(_i), uso_scanner(_s), uso_modem(_m), 
+			 uso_disco(_d),recurso_bloqueado(_rb) { }
 		friend ostream& operator<<(ostream& os,const processo_t& it);
 		int get_pid();
 		void set_pid(const int _id);
@@ -48,6 +49,7 @@ class processo_t
 		int get_recursobloqueado();
 		void set_recursobloqueado(const int _rb);
 		void executar(int &tempo);
+		bool in_mem();
 	private:
 		int pid;
 		int time_init;
