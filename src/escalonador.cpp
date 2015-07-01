@@ -8,7 +8,7 @@ void escalonador::show_allp()
 		//despachante(p);
 
 	cout << "\nTodos os processos de tempo real: " << endl;
-	for(int i=0; i<f_temporeal.size(); i++)
+	for(int i=0; i<(int)f_temporeal.size(); i++)
 	{
 		q = f_temporeal.front();
 		despachante(q);
@@ -17,7 +17,7 @@ void escalonador::show_allp()
 	}
 
 	cout << "\nTodos os processos de usuario com prioridade 1: "<< endl;
-	for(int i=0; i<f_usuario_p1.size(); i++)
+	for(int i=0; i<(int)f_usuario_p1.size(); i++)
 	{
 		q = f_usuario_p1.front();
 		despachante(q);
@@ -26,7 +26,7 @@ void escalonador::show_allp()
 	}
 
 	cout << "\nTodos os processos de usuario com prioridade 2: "<< endl;
-	for(int i=0; i<f_usuario_p2.size(); i++)
+	for(int i=0; i<(int)f_usuario_p2.size(); i++)
 	{
 		q = f_usuario_p2.front();
 		despachante(q);
@@ -35,7 +35,7 @@ void escalonador::show_allp()
 	}
 
 	cout << "\nTodos os processos de usuario com prioridade 3: "<< endl;
-	for(int i=0; i<f_usuario_p3.size(); i++)
+	for(int i=0; i<(int)f_usuario_p3.size(); i++)
 	{
 		q = f_usuario_p3.front();
 		despachante(q);
@@ -58,7 +58,6 @@ void escalonador::utils_tomem(string nome_arq)
 	char *pch;
 	processo_t p;
 	int id = 0;
-	int _ti, _pr, _tp, _qb, _i, _s, _m, _d;
 
 	while(getline(sc,s))
 	{
@@ -72,7 +71,7 @@ void escalonador::utils_tomem(string nome_arq)
 			}
 		}
 	}		
-	for(int i=0;i<aux.size();i+=8)
+	for(int i=0;i<(int)aux.size();i+=8)
 	{
 		p.set_pid(id);
 		p.set_memoffset(-1);
@@ -92,15 +91,7 @@ void escalonador::utils_tomem(string nome_arq)
 
 void escalonador::order_process()
 {
-	int pr;
-
 	sort(processos.begin(), processos.end(), first_executed);
-
-	for(processo_t p : processos)
-	{
-		volta_ffila(p);
-	}
-
 }
 
 void escalonador::start_time()
@@ -115,17 +106,16 @@ int escalonador::get_time_passed()
 
 bool escalonador::ainda_existe_processo()
 {
-	return 
+	return (
 		!f_temporeal.empty() ||
 		!f_usuario_p1.empty() ||
 		!f_usuario_p2.empty() ||
-		!f_usuario_p3.empty();
+		!f_usuario_p3.empty() || !processos.empty());
 }
 
 // ## Verifica se existe algum processo nas filas que ja pode ser executado ## //
 bool escalonador::prox_processo(processo_t *p)
 {
-
 	if(!f_temporeal.empty() && 
 			f_temporeal.front().get_timeinit() <= seconds_passed)
 	{
@@ -160,13 +150,26 @@ bool escalonador::prox_processo(processo_t *p)
 	
 }
 
+void escalonador::popula()
+{
+	int i = 0;
+	processo_t p;
+	while(i < (int)processos.size() && processos[i].get_timeinit() < seconds_passed + 1)
+	{
+		p = processos[i];
+		vai_ffila(p);
+		i++;
+	}
+	processos.erase(processos.begin(),processos.begin()+i);
+}
+
 void escalonador::simulacao()
 {
 	processo_t p;
-	int tipo_p;
 	unsigned int offset;
 	while(ainda_existe_processo())
 	{
+		popula();
 		if(prox_processo(&p))
 		{
 			if(!p.in_mem())
@@ -174,20 +177,23 @@ void escalonador::simulacao()
 			  offset = m.aloca(p.get_qtdblocos(),p.get_prioridade());
 			  if(offset==MAX_MEM)
 			  {
-			    cout << "\a---ERROR : MEMORIA NAO ALOCADA---" << endl;
-			    volta_ffila(p);
-			    continue;
+				cout << "\a---ERROR : MEMORIA NAO ALOCADA PROCESSO " << p.get_pid() << " ---" << endl;
+				vai_ffila(p);
+				seconds_passed++;
+				continue;
 			  }
 			  else
-			    p.set_memoffset(offset);
+				p.set_memoffset(offset);
 			}
 			despachante(p);
 			p.executar(seconds_passed);
 			if(p.get_timeexec() > 0)
-			  volta_ffila(p);
+			  vai_ffila(p);
 			else
+			{
 			  m.desaloca(p.get_memoffset(),p.get_qtdblocos());
-			// SE TEMPO DE EXECUCAO > 0 VOLTA PRA FILA
+			  p.liberar_recursos();
+			}
 		}
 		else
 		  seconds_passed++;
@@ -196,7 +202,7 @@ void escalonador::simulacao()
 }
 
 
-void escalonador::volta_ffila(processo_t _p)
+void escalonador::vai_ffila(processo_t _p)
 {
   switch(_p.get_prioridade())
   {

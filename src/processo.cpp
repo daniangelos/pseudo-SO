@@ -137,16 +137,34 @@ void processo_t::imprime_execucao(int tempo)
 	cout << "\tprioridade do processo: " << prioridade << endl;
 	cout << "\ttempo desde que chegou: " << tempo - time_init << endl;
 	cout << "\ttempo restante de execucao: " << time_proc << endl;
-	cout << "\tretem recurso: " << recurso_bloqueado << endl;
+	cout << "\tretem recurso: "; 
+	switch(recurso_bloqueado)
+	{
+		case SEM_RECURSO:
+			cout << "nao";
+			break;
+		case IMPRESSORA:
+			cout << "impressora";
+			break;
+		case SCANNER:
+			cout << "scanner";
+			break;
+		case DISCO:
+			cout << "disco";
+			break;
+		case MODEM:
+			cout << "modem";
+			break;
+	}
+	cout << endl;
 
 }
 
-void processo_t::go(int &recurso, int &sucesso)
+void processo_t::check()
 {
-	if(recurso_bloqueado){
-		liberar_recurso(recurso_bloqueado);
-		recurso_bloqueado = 0;
-	}
+	int recurso;
+	int sucesso;
+	liberar_recursos();
 	recurso = use_recurso();
 	sucesso = bloquear_recurso(recurso);
 	if(sucesso)
@@ -156,12 +174,17 @@ void processo_t::go(int &recurso, int &sucesso)
 	time_proc -= QUANTUM;
 }
 
+void processo_t::liberar_recursos()
+{
+	if(recurso_bloqueado){
+		liberar_recurso(recurso_bloqueado);
+		recurso_bloqueado = 0;
+	}
+}
+
 // ## Funcao de execucao de um processo ## //
 void processo_t::executar(int &tempo)
 {
-	int recurso;
-	int sucesso;
-	imprime_execucao(tempo);
 	switch(prioridade){
 		case TEMPO_REAL:
 			tempo += time_proc;
@@ -170,7 +193,7 @@ void processo_t::executar(int &tempo)
 
 		case USUARIO_P1:
 		case USUARIO_P2:
-			go(recurso,sucesso);
+			check();
 			tempo+=QUANTUM;
 			break;
 
@@ -178,13 +201,14 @@ void processo_t::executar(int &tempo)
 			int i = 0;
 			while(!recurso_bloqueado)
 			{
-				go(recurso,sucesso);
+				check();
 				i++;
 			}
 			tempo+=QUANTUM*i;
 			time_proc-=QUANTUM*i;
 			break;
 	}
+	imprime_execucao(tempo);
 	return;
 }
 // ## Funcao que checa se o processo utiliza algum recurso ##//
@@ -204,6 +228,7 @@ int processo_t::use_recurso()
 	int use = has_recurso();
 	if(use)
 	{
+		use = 0;
 		if(rand()%100 < PORCENTAGEM)
 		{
 			int redo;

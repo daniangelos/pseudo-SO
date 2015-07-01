@@ -20,7 +20,8 @@ class escalonador
 		queue<processo_t> f_usuario_p3;
 		queue<processo_t> f_temporeal;
 		memoria m;
-		void volta_ffila(processo_t _p);
+		void vai_ffila(processo_t _p);
+		void popula();
 	public:
 		int seconds_passed;
 		void show_allp();

@@ -8,7 +8,7 @@
 #include <ctime>
 #include <cstdlib>
 #include "../header/recurso.hpp"
-#define PORCENTAGEM 21
+#define PORCENTAGEM 51
 #define QUANTUM 1
 
 using namespace std;
@@ -50,6 +50,7 @@ class processo_t
 		void set_recursobloqueado(const int _rb);
 		void executar(int &tempo);
 		bool in_mem();
+		void liberar_recursos();
 	private:
 		int pid;
 		int time_init;
@@ -64,7 +65,7 @@ class processo_t
 		int recurso_bloqueado;
 		int has_recurso();
 		int use_recurso();
-		void go(int &recurso, int &sucesso);
+		void check();
 		void imprime_execucao(int tempo);
 };
 
