@@ -8,6 +8,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <algorithm>
+#include <unistd.h>
 #include "processo.hpp"
 #include "memoria.hpp"
 
@@ -22,17 +23,19 @@ class escalonador
 		memoria m;
 		void vai_ffila(processo_t _p);
 		void popula();
-	public:
-		int seconds_passed;
-		void show_allp();
-		void despachante (processo_t p);
-		void utils_tomem(string nome_arq);
-		void order_process();
-		void start_time();
-		void simulacao();
-		int get_time_passed();
+		void executa_processo(processo_t& _p);
 		bool prox_processo(processo_t *p);
 		bool ainda_existe_processo();
+		void order_process();
+		void start_time();
+		void show_allp();
+		void despachante (processo_t& p);
+		void print_exec(processo_t p);
+	public:
+		int seconds_passed;
+		void utils_tomem(string nome_arq);
+		void simulacao();
+		int get_time_passed();
 };
 
 #endif //ESCALONADOR_HPP

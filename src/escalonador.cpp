@@ -5,13 +5,13 @@ void escalonador::show_allp()
 
 	//cout << "Todos os processos: " << endl;
 	//for(processo_t p : processos)
-		//despachante(p);
+	//despachante(p);
 
 	cout << "\nTodos os processos de tempo real: " << endl;
 	for(int i=0; i<(int)f_temporeal.size(); i++)
 	{
 		q = f_temporeal.front();
-		despachante(q);
+		cout << q << endl;
 		f_temporeal.pop();
 		f_temporeal.push(q);
 	}
@@ -20,7 +20,7 @@ void escalonador::show_allp()
 	for(int i=0; i<(int)f_usuario_p1.size(); i++)
 	{
 		q = f_usuario_p1.front();
-		despachante(q);
+		cout << q << endl;
 		f_usuario_p1.pop();
 		f_usuario_p1.push(q);
 	}
@@ -29,7 +29,7 @@ void escalonador::show_allp()
 	for(int i=0; i<(int)f_usuario_p2.size(); i++)
 	{
 		q = f_usuario_p2.front();
-		despachante(q);
+		cout << q << endl;
 		f_usuario_p2.pop();
 		f_usuario_p2.push(q);
 	}
@@ -38,14 +38,18 @@ void escalonador::show_allp()
 	for(int i=0; i<(int)f_usuario_p3.size(); i++)
 	{
 		q = f_usuario_p3.front();
-		despachante(q);
+		cout << q << endl;
 		f_usuario_p3.pop();
 		f_usuario_p3.push(q);
 	}
 }
 
-void escalonador::despachante(processo_t p){
+void escalonador::despachante(processo_t& p){
+	cout << "dispatcher =>" << '\n';
 	cout << p << endl;
+	executa_processo(p);
+	print_exec(p);
+	sleep(QUANTUM);
 	return;
 }
 
@@ -107,10 +111,10 @@ int escalonador::get_time_passed()
 bool escalonador::ainda_existe_processo()
 {
 	return (
-		!f_temporeal.empty() ||
-		!f_usuario_p1.empty() ||
-		!f_usuario_p2.empty() ||
-		!f_usuario_p3.empty() || !processos.empty());
+			!f_temporeal.empty() ||
+			!f_usuario_p1.empty() ||
+			!f_usuario_p2.empty() ||
+			!f_usuario_p3.empty() || !processos.empty());
 }
 
 // ## Verifica se existe algum processo nas filas que ja pode ser executado ## //
@@ -147,7 +151,7 @@ bool escalonador::prox_processo(processo_t *p)
 
 	// ## Nao chegaram processos ainda ## //
 	return false;
-	
+
 }
 
 void escalonador::popula()
@@ -167,6 +171,8 @@ void escalonador::simulacao()
 {
 	processo_t p;
 	unsigned int offset;
+	order_process();
+	start_time();
 	while(ainda_existe_processo())
 	{
 		popula();
@@ -174,29 +180,31 @@ void escalonador::simulacao()
 		{
 			if(!p.in_mem())
 			{
-			  offset = m.aloca(p.get_qtdblocos(),p.get_prioridade());
-			  if(offset==MAX_MEM)
-			  {
-				cout << "\a---ERROR : MEMORIA NAO ALOCADA PROCESSO " << p.get_pid() << " ---" << endl;
-				vai_ffila(p);
-				seconds_passed++;
-				continue;
-			  }
-			  else
-				p.set_memoffset(offset);
+				offset = m.aloca(p.get_qtdblocos(),p.get_prioridade());
+				if(offset==MAX_MEM)
+				{
+					cout << "\a---ERROR : MEMORIA NAO ALOCADA PROCESSO " << p.get_pid() << " ---" << endl;
+					vai_ffila(p);
+					seconds_passed++;
+					continue;
+				}
+				else
+					p.set_memoffset(offset);
 			}
 			despachante(p);
-			p.executar(seconds_passed);
 			if(p.get_timeexec() > 0)
-			  vai_ffila(p);
+				vai_ffila(p);
 			else
 			{
-			  m.desaloca(p.get_memoffset(),p.get_qtdblocos());
-			  p.liberar_recursos();
+				cout << "Processo " << p.get_pid() << " recebeu SIGINT" << endl;
+				m.desaloca(p.get_memoffset(),p.get_qtdblocos());
+				p.liberar_recursos();
 			}
 		}
 		else
-		  seconds_passed++;
+		{
+			seconds_passed++;
+		}
 
 	}	
 }
@@ -204,20 +212,79 @@ void escalonador::simulacao()
 
 void escalonador::vai_ffila(processo_t _p)
 {
-  switch(_p.get_prioridade())
-  {
-    case TEMPO_REAL:
-	    f_temporeal.push(_p);
-	    break;
-    case USUARIO_P1:
-	    f_usuario_p1.push(_p);
-	    break;
-    case USUARIO_P2:
-	    f_usuario_p2.push(_p);
-	    break;
-    case USUARIO_P3:
-	    f_usuario_p3.push(_p);
-	    break;
-     
-  }
+	switch(_p.get_prioridade())
+	{
+		case TEMPO_REAL:
+			f_temporeal.push(_p);
+			break;
+		case USUARIO_P1:
+			f_usuario_p1.push(_p);
+			break;
+		case USUARIO_P2:
+			f_usuario_p2.push(_p);
+			break;
+		case USUARIO_P3:
+			f_usuario_p3.push(_p);
+			break;
+
+	}
+}
+// ## Funcao de execucao de um processo ## //
+void escalonador::executa_processo(processo_t& _p)
+{
+	switch(_p.get_prioridade()){
+		case TEMPO_REAL:
+			seconds_passed += _p.get_timeexec();
+			sleep(_p.get_timeexec()-QUANTUM);
+			_p.set_timeexec(0);
+			break;
+
+		case USUARIO_P1:
+		case USUARIO_P2:
+		case USUARIO_P3:
+			_p.check();
+			seconds_passed+=QUANTUM;
+			break;
+			// o default vai ate o fim do processo, nunca sera usado pois esta no case logo acima
+		default: //USUARIO_P3
+			int i = 0;
+			while(!_p.get_recursobloqueado())
+			{
+				_p.check();
+				i++;
+			}
+			seconds_passed+=QUANTUM*i;
+			sleep((QUANTUM*i-1));
+			_p.set_timeexec(_p.get_timeexec()-QUANTUM*i);
+			break;
+	}
+	return;
+}
+void escalonador::print_exec(processo_t p)
+{
+	cout << "processo " << p.get_pid() << " foi executado => " << endl;
+	cout << "\tprioridade do processo: " << p.get_prioridade() << endl;
+	cout << "\ttempo desde que chegou: " << seconds_passed - p.get_timeinit() << endl;
+	cout << "\ttempo restante de execucao: " << p.get_timeexec() << endl;
+	cout << "\tretem recurso: "; 
+	switch(p.get_recursobloqueado())
+	{
+		case SEM_RECURSO:
+			cout << "nao";
+			break;
+		case IMPRESSORA:
+			cout << "impressora";
+			break;
+		case SCANNER:
+			cout << "scanner";
+			break;
+		case DISCO:
+			cout << "disco";
+			break;
+		case MODEM:
+			cout << "modem";
+			break;
+	}
+	cout << endl;
+
 }

@@ -1,7 +1,5 @@
 #include<iostream>
-#include "../header/processo.hpp"
 #include "../header/escalonador.hpp"
-#include "../header/memoria.hpp"
 
 using namespace std;
 
@@ -17,21 +15,7 @@ int main(int argc, char* argv[]) {
 
 	escalonador e;
 	inicializarSemaforos();
-
-	/*memoria m;
-	cout << m.aloca(64,0) << endl;
-	m.show();
-	cin.get();
-	cout << m.aloca(32,2) << endl;
-	m.show();
-	cin.get();
-	cout << m.aloca(64,1) << endl;
-	m.show();
-	cin.get();*/
-
 	e.utils_tomem(input);
-	e.order_process();
-	e.start_time();
 	e.simulacao();
 
 	return 0;

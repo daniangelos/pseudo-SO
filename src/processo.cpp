@@ -1,7 +1,6 @@
 #include "../header/processo.hpp"
 ostream& operator<<(ostream& os,const processo_t& it)
 {
-	os << "dispatcher =>" << '\n';
 	os << "\tPID: " << it.pid << '\n';
 	os << "\tpriority: " << it.prioridade << '\n';
 	os << "\ttime_init: " << it.time_init << '\n';
@@ -131,34 +130,6 @@ void processo_t::set_recursobloqueado(const int _rb)
 // Metodos
 
 // ## Impressao da execucao de um processo ## //
-void processo_t::imprime_execucao(int tempo)
-{
-	cout << "processo " << pid << " a ser executado => " << endl;
-	cout << "\tprioridade do processo: " << prioridade << endl;
-	cout << "\ttempo desde que chegou: " << tempo - time_init << endl;
-	cout << "\ttempo restante de execucao: " << time_proc << endl;
-	cout << "\tretem recurso: "; 
-	switch(recurso_bloqueado)
-	{
-		case SEM_RECURSO:
-			cout << "nao";
-			break;
-		case IMPRESSORA:
-			cout << "impressora";
-			break;
-		case SCANNER:
-			cout << "scanner";
-			break;
-		case DISCO:
-			cout << "disco";
-			break;
-		case MODEM:
-			cout << "modem";
-			break;
-	}
-	cout << endl;
-
-}
 
 void processo_t::check()
 {
@@ -182,36 +153,6 @@ void processo_t::liberar_recursos()
 	}
 }
 
-// ## Funcao de execucao de um processo ## //
-void processo_t::executar(int &tempo)
-{
-	switch(prioridade){
-		case TEMPO_REAL:
-			tempo += time_proc;
-			time_proc = 0;
-			break;
-
-		case USUARIO_P1:
-		case USUARIO_P2:
-		case USUARIO_P3:
-			check();
-			tempo+=QUANTUM;
-			break;
-// o default vai ate o fim do processo, nunca sera usado pois esta no case logo acima
-		default: //USUARIO_P3
-			int i = 0;
-			while(!recurso_bloqueado)
-			{
-				check();
-				i++;
-			}
-			tempo+=QUANTUM*i;
-			time_proc-=QUANTUM*i;
-			break;
-	}
-	imprime_execucao(tempo);
-	return;
-}
 // ## Funcao que checa se o processo utiliza algum recurso ##//
 int processo_t::has_recurso()
 {
@@ -265,10 +206,10 @@ int processo_t::use_recurso()
 // ## Funcao que checa se o processo esta em memoria ## //
 bool processo_t::in_mem()
 {
-  bool resposta = false;
-  if(this->mem_offset!=-1)
-    resposta = true;
-  return resposta;
+	bool resposta = false;
+	if(this->mem_offset!=-1)
+		resposta = true;
+	return resposta;
 }
 
 // ## Funcao utilizada na funcao de ordenacao ## //
