@@ -193,10 +193,11 @@ void processo_t::executar(int &tempo)
 
 		case USUARIO_P1:
 		case USUARIO_P2:
+		case USUARIO_P3:
 			check();
 			tempo+=QUANTUM;
 			break;
-
+// o default vai ate o fim do processo, nunca sera usado pois esta no case logo acima
 		default: //USUARIO_P3
 			int i = 0;
 			while(!recurso_bloqueado)
