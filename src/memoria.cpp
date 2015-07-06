@@ -11,6 +11,11 @@ memoria::memoria()
 unsigned int memoria::aloca(unsigned int qtd, int tipo_p)
 {
 	unsigned int offset = MAX_MEM;
+	if(qtd > MAX_MEM)
+	{
+		offset = 1026;
+		return offset;
+	}
 	switch(tipo_p)
 	{
 		case TEMPO_REAL:

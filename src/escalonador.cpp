@@ -191,6 +191,10 @@ void escalonador::simulacao()
 					seconds_passed++;
 					continue;
 				}
+				else if(offset > MAX_MEM){
+					p.set_timeexec(0);
+					cout << "\a---ERROR : MEMORIA MAIOR QUE O TOTAL " << endl;
+				}
 				else
 					p.set_memoffset(offset);
 			}
