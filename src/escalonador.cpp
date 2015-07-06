@@ -184,6 +184,9 @@ void escalonador::simulacao()
 				if(offset==MAX_MEM)
 				{
 					cout << "\a---ERROR : MEMORIA NAO ALOCADA PROCESSO " << p.get_pid() << " ---" << endl;
+					p.set_prioridade(p.get_prioridade()+1);
+					if(p.get_prioridade() > 3)
+						p.set_prioridade(3);
 					vai_ffila(p);
 					seconds_passed++;
 					continue;
@@ -193,7 +196,12 @@ void escalonador::simulacao()
 			}
 			despachante(p);
 			if(p.get_timeexec() > 0)
+			{
+				p.set_prioridade(p.get_prioridade()+1);
+				if(p.get_prioridade() > 3)
+					p.set_prioridade(3);
 				vai_ffila(p);
+			}
 			else
 			{
 				cout << "Processo " << p.get_pid() << " recebeu SIGINT" << endl;
