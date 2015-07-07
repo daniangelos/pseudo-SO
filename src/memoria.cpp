@@ -11,17 +11,22 @@ memoria::memoria()
 unsigned int memoria::aloca(unsigned int qtd, int tipo_p)
 {
 	unsigned int offset = MAX_MEM;
-	if(qtd > MAX_MEM)
-	{
-		offset = 1026;
-		return offset;
-	}
 	switch(tipo_p)
 	{
 		case TEMPO_REAL:
+			if(qtd > MAX_REAL)
+			{
+				offset = 1026;
+				return offset;
+			}
 			offset = verifica(qtd,START,MAX_REAL);
 		   break;
 	   	default:
+			if(qtd > MAX_USUARIO)
+			{
+				offset = 1026;
+				return offset;
+			}
 			offset = verifica(qtd,MAX_REAL,MAX_MEM);
 			break;	   
 	}
